@@ -26,7 +26,7 @@ public class WebSocketChatServer {
             ServerBootstrap b = new ServerBootstrap(); // (2)
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class) // (3)
-                    .childHandler(new WebSocketChatServerInitializer())  //(4)
+                    .childHandler(new WebSocketServerInitializer())  //(4)
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
