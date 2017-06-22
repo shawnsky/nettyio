@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -31,16 +32,23 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         channels.add(ctx.channel());
-        TextWebSocketFrame msg = new TextWebSocketFrame(new Date().toString()+ " ["
-                + ctx.channel().remoteAddress()+ "]加入");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+        TextWebSocketFrame msg = new TextWebSocketFrame(" ["
+                + ctx.channel().remoteAddress()+ "] "+sdf.format(new Date())+" 加入");
         channels.writeAndFlush(msg);
         System.out.println("["+ctx.channel().remoteAddress()+"] 加入" );
     }
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         channels.remove(ctx.channel());
-        TextWebSocketFrame msg = new TextWebSocketFrame(new Date().toString()+ " ["
-                + ctx.channel().remoteAddress()+ "]离开");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+
+        TextWebSocketFrame msg = new TextWebSocketFrame(" ["
+                + ctx.channel().remoteAddress()+ "]"+sdf.format(new Date())+" 离开");
         channels.writeAndFlush(msg);
         System.out.println("["+ctx.channel().remoteAddress()+"] 离开" );
     }
@@ -82,9 +90,10 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         String msg = ((TextWebSocketFrame) frame).text();
         System.out.println("["+ctx.channel().remoteAddress()+"]说: " + msg);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         //文本是用TextWebSocketFrame的形式发送
-        TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString()+ " ["
-                + ctx.channel().remoteAddress()+ "]说: " + msg);
+        TextWebSocketFrame tws = new TextWebSocketFrame(" ["
+                + ctx.channel().remoteAddress()+ "] "+sdf.format(new Date())+" 说: " + msg);
 
         // broadcast
         channels.writeAndFlush(tws);
@@ -97,7 +106,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             return;
         }
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-                "ws://localhost:7397/websocket", null, false);
+                "ws://localhost:8080/", null, false);
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
             WebSocketServerHandshakerFactory
